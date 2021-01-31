@@ -1,0 +1,9 @@
+{
+  "title": "Jexus Web服务器",
+  "name": "Jexus",
+  "ps": "国产的Http Web Server",
+  "versions": "1.0",
+  "checks": "/www/server/panel/plugin/Jexus",
+  "author": "Jexus",
+  "home": "https://www.jexus.org"
+}

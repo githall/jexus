@@ -1,0 +1,482 @@
+<style>
+    /*样式写这里*/
+   .span_red
+   {
+       color: red;
+   }
+
+</style>
+<div class="bt-form">
+    <div class="bt-w-main">
+        <!--菜单部分-->
+        <div class="bt-w-menu">
+            <p class="bgw" onclick="Jexus.switch_view('index')">网站管理</p>
+            <p onclick="Jexus.switch_view('service')">环境安装</p>
+            <p onclick="Jexus.switch_view('logs')">日志信息</p>
+
+        </div>
+        <!--内容部分-->
+        <div class="bt-w-con pd15">
+            <!-- 主页显示内容 -->
+            <div class="plugin_body" id="index">
+                <div id="index_notice">
+                    <p><span class="span_red">[友情提醒]:</span><br/>
+                        1.请不要在宝塔面板的网站选项中删除ASP.NET站点,这会导致插件出现错误<br/>
+                        2.网络上很多ASP.NET程序需要连接ACCESS数据库,请自行安装相关环境<br/>
+                        3.本插件实质是借助 mono 虚拟化Windows 环境,如非必要请不要频繁重启 Jexus<br/>
+                        4.插件论坛帖子地址<a class="btlink" target="_blank" href="https://www.bt.cn/bbs/thread-33593-1-1.html">点击这里跳转到宝塔论坛</a>,QQ群:427901182
+                    </p>
+                     <button id="ServerAdd" onclick="Jexus.Site_Add()" class="btn btn-success btn-sm va0" type="button" >添加网站</button><br/>
+                </div>
+                <hr/>
+                <table border="1" class="table table-hover" style="min-width: 640px;border: 0 none;" id="site_list">
+                    <tr><td>站点名称</td><td>网站目录</td><td>绑定域名</td><td>站点状态</td><td>操作</td></tr>
+                    <tr><td>Default</td><td><a class="btlink" path="/www/server/panel/plugin/Jexus/config/DefaultSite/" onclick="Jexus.Path_Click(this)">/www/server/panel/plugin/Jexus/config/DefaultSite/</a></td><td>localhost</td><td><span style="color: green">已启动</span></td><td><a class="btlink" onclick="Jexus.Site_Default()">停止</a>&nbsp;<a class="btlink" onclick="Jexus.Site_Default()">重启</a>&nbsp;<a class="btlink" onclick="Jexus.Site_Default()">删除</a>&nbsp;<a class="btlink" onclick="Jexus.Site_Default()">配置</a></td></tr>
+                </table>
+            </div>
+              <div class="plugin_body" id="service" style="display: none">
+                  <div id="service_version" style="text-align:left"><p>Mono 版本:<span id="service_mono_version"></span>&nbsp;&nbsp;&nbsp;Jexus版本:<span id="service_Jexus_version"></span></p><br/><p>服务器状态:<span id="service_server_status" style="color: orange">加载中...</span></p></div><hr/>
+                  <div class="ss-text pull-left">
+                        <em>开机自启动</em>
+                           <div class="ssh-item" >
+                                   <input class='btswitch btswitch-ios' id='service_autorun' type='checkbox' onclick="Jexus.service_Autorun()"><label class='btswitch-btn sshswitch' for='service_autorun'></label>
+                           </div>
+                    </div>
+                  <div id="service_control" align="right">
+                      服务器控制:
+                      <button id="ServerStart" onclick="Jexus.service_Control('start')" class="btn btn-sm va0" type="button" >启动</button>
+                      <button id="ServerStop" onclick="Jexus.service_Control('stop')" class="btn  btn-sm va0" type="button" >停止</button>
+                      <button id="ServerReload" onclick="Jexus.service_Control('restart')" class="btn  btn-sm va0" type="button" >重启</button>
+                  </div>
+                  <hr/>
+                  <div id="service_config" align="center">
+                      <table border="1" class="table table-hover" style="min-width: 640px;border: 0 none;">
+                          <tr><td>最大线程数(Processes)</td><td><input type="text" id="http_process"></td><td> 1-24. (0 is auto)</td></tr>
+                          <tr><td>最大内存(MaxTotalMemory)</td><td><input type="text" id="http_Memory"></td><td> In megabytes. Set to 0 for auto.</td></tr>
+                          <tr><td>最大单线程CPU调度时间(MaxCpuTime)</td><td><input type="text" id="http_CpuTime"></td><td>  In seconds. Set to 0 for unlimited.</td></tr>
+                          <tr><td>最大连接数量(MaxConnPerIp)</td><td><input type="text" id="http_ConnIp"></td><td> 0 is unlimited</td></tr>
+                          <tr><td colspan="2">Jexus默认端口号:<span class="span_red">2333</span><br/>全局配置文件:<span class="span_red">/www/server/jexus/jws.conf</span><br/><a  class="btlink" href="https://www.iw3c.top/index/index.php/archives/25.html" target="_blank">点击这里查看更多配置信息</a></td><td><button id="ServerConfig" onclick="Jexus.service_config()" class="btn  btn-sm va0" type="button" >修改配置</button></td></tr>
+                      </table>
+                  </div>
+            </div>
+              <div class="plugin_body" id="logs" style="display: none">
+                 <textarea id="logs_textarea" readonly="" style="margin: 0px;width: 95%;height: 520px;background-color: #333;color:#fff; padding:0 5px"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<!--JS脚本部分，不要将JS脚本写在其它地方-->
+<script type="text/javascript">
+
+    //定义窗口尺寸
+    $('.layui-layer-page').css({ 'width': '1050px' });
+
+    //左测菜单切换效果
+    $(".bt-w-menu p").click(function () {
+        $(this).addClass('bgw').siblings().removeClass('bgw')
+    });
+
+    var mono_version="";
+    var Jexus_version;
+    var web_server;
+    var sitename="";
+    var siteid="";
+    var msg,frame;
+    var Jexus= {
+
+
+       //切换插件显示不同的视图页面
+       switch_view:function(view)
+       {
+           if(mono_version=="")
+           {
+               // 获取当前插件 已经安装的WEB服务器模块
+               msg=layer.msg('首次启动可能需要10-20S,请稍候...',{time:false})
+             request_plugin('Jexus','sys_version','',function(rdata) {
+               mono_version=rdata['mono'];Jexus_version=rdata['Jexus'];layer.close(msg);
+             if (mono_version=='0.0.0.0' && view=='index') layer.msg('请先安装Jexus环境! ',{icon:5});
+             Jexus.switch_view(view);
+             },20000);
+           }
+           else
+           {
+                 //隐藏所有页面
+               $('#index').hide();
+               $('#service').hide();
+               $('#logs').hide();
+               switch (view) {
+                   case "index":
+                       Jexus.show_view_index();
+                       break;
+                   case "service":
+                       Jexus.show_view_service();
+                       break;
+                   case "logs":
+                       Jexus.show_view_logs();
+                       break;
+               }
+           }
+
+       },
+        show_view_index:function ()
+       {
+              Jexus.Site_List("");
+              $('#index').show();
+       },
+       show_view_service:function()
+       {
+          $('#service').show();
+          $('#service_Jexus_version').html(Jexus_version);
+          $('#service_mono_version').html(mono_version);
+           layer.close(msg);
+           msg=layer.msg('获取服务器设置信息中...请稍候...',{time:false})
+             request_plugin('Jexus','sys_info','',function(rdata) {
+                 layer.close(msg);
+                 if(rdata['service']=="run")
+                 {
+                      $('#service_server_status').html("已启动");
+                      $('#service_server_status').css("color","green");
+                 }
+                 else if(rdata['service']=="stop")
+                 {
+                      $('#service_server_status').html("已停止");
+                      $('#service_server_status').css("color","red");
+                 }
+                   if(rdata['AutoRun']=="on") $("#service_autorun").attr('checked',true)
+                   else  $("#service_autorun").removeAttr("checked");
+                   $("#http_process").val(rdata['process']);
+                   $('#http_Memory').val(rdata['Memory']);
+                   $('#http_CpuTime').val(rdata['CpuTime']);
+                   $('#http_ConnIp').val(rdata['ConnIp']);
+
+             },15000)
+       },
+       show_view_logs:function()
+       {
+           $('#logs').show();
+            request_plugin('Jexus','sys_log','',function(rdata) {
+             if(rdata['status']!="Success") var content=rdata['msg']; else content=rdata['body'];
+             $('#logs_textarea').html(content);
+             });
+       },
+        service_Autorun:function()
+        {
+            request_plugin('Jexus','sys_SetAutorun','',function(rdata) {
+                   layer.close(msg);
+                  msg=layer.msg('设置Jexus 开机自启动(开启/关闭)成功!');
+                  Jexus.switch_view('service');
+            });
+        },
+        service_config:function ()
+        {
+            layer.close(msg);
+            msg=layer.msg('正在重新配置Jexus...',{time:false});
+            var config='process='+$("#http_process").val()+'&Memory='+$("#http_Memory").val()+'&CpuTime='+$("#http_CpuTime").val()+'&ConnIp='+$("#http_ConnIp").val();
+             request_plugin('Jexus','sys_config',config,function(rdata) {
+                     setTimeout(Jexus.switch_view('service'),10000);
+            },15000);
+        },
+
+        service_Control:function(cmd)
+        {
+             layer.close(msg);
+            msg=layer.msg('正在执行命令...',{time:false});
+               request_plugin('Jexus','sys_control','cmd='+cmd,function(rdata) {
+                    Jexus.switch_view('service');
+            },15000);
+        },
+        Site_Default:function()
+        {
+             layer.close(msg);
+              msg=layer.msg('[错误]:默认站点不允许停止/重启/删除/配置',{icon:5});
+        },
+        Site_Add:function()
+        {
+           frame=layer.open({
+                type: 1,
+                title:'添加站点',
+                skin: 'layui-layer-rim', //加上边框
+                area: ['420px', '400px'], //宽高
+                content: '<div align="center"><table  class="table table-hover" style="border: 0 none;">' +
+                    '<tr><td>网站名称:</td><td><input id="Site_Add_Name"></td></tr>' +
+                    '<tr><td>网站目录:</td><td><input id="Site_Add_Path"  style="width:300px;" value="/www/wwwroot/"></td></tr>' +
+                    '<tr><td>绑定域名:</td><td><textarea id="Site_Add_Domain" class="bt-input-text mr20 webname_y4LKda"  style="width:200px;height:100px;line-height:22px"></textarea></td></tr>' +
+                    '<tr><td colspan="2">网站名称必须为英文<br/>一行一个域名，默认为80端口<br/>支持域名泛解析，如*.bt.cn<br/>如果另外加端口格式为 www.bt.cn:88</td></tr>' +
+                    '<tr><td colspan="2" align="center  "><button class="btn btn-success btn-sm va0" onclick="Jexus.Site_Add_Post()">确认修改</button></td></tr>' +
+                    '</table></div>'
+              });
+        },
+        Site_Add_Post:function(response)
+        {
+            //向服务器提交请求
+            if(!response)
+            {
+              layer.close(msg);msg=layer.msg("正在创建站点:请求Jexus服务器(第1步，共4步)");
+              var data='Name='+$('#Site_Add_Name').val()+'&Path='+$('#Site_Add_Path').val()+'&Domain='+$('#Site_Add_Domain').val();
+              request_plugin('Jexus','Site_add',data,function(rdata) {
+                  if(rdata['status']=="Failed") {layer.close(msg);msg=layer.msg("[错误]:已经存在同名站点");layer.close(frame);}
+                  else{
+                         BT.AddSite(rdata['webname']);// 前端调用宝塔API 添加网站
+                         sitename=rdata['sitename'];
+                      }
+              });
+            }
+
+            // 启动Jexus 加载站点
+            else if(response['msg']=='添加成功')
+            {
+                 layer.close(msg);msg=layer.msg("正在创建站点:正在请求Jexus启动站点(第4步，共4步)");
+                 var data='sitename='+$('#Site_Add_Name').val()+'&id='+siteid;
+                 request_plugin('Jexus','Site_Start',data,function()
+                 {layer.close(frame);layer.close(msg);msg=layer.msg("添加站点成功!");Jexus.Site_List("");
+                 });
+            }
+             // 设置反向代理
+            else{
+                siteid=response['siteId'];
+                BT.ProxySite(sitename);
+            }
+        },
+        Site_List:function(rdata)
+        {
+            var table='<tr><td>站点名称</td><td>网站目录</td><td>绑定域名</td><td>站点状态</td><td>操作</td></tr><tr><td>Default</td><td><a class="btlink" path="/www/server/panel/plugin/Jexus/config/DefaultSite/" onclick="Jexus.Path_Click(this)">/www/server/panel/plugin/Jexus/config/DefaultSite/</a></td><td>localhost</td><td><span style="color: green">已启动</span></td><td><a class="btlink" onclick="Jexus.Site_Default()">停止</a>&nbsp;<a class="btlink" onclick="Jexus.Site_Default()">重启</a>&nbsp;<a class="btlink" onclick="Jexus.Site_Default()">删除</a>&nbsp;<a class="btlink" onclick="Jexus.Site_Default()">配置</a></td></tr>';
+            if(rdata['status']=="Success")
+           {
+               for (var i=0;i<rdata['num'];i++)
+               {
+                   var data=rdata['list'][i];
+                   var status="";
+                   data=JSON.parse(data);
+                   var SiteName="<td>"+data['SiteName']+"</td>";
+                   var SitePath="<td><a class=\"btlink\" path=\""+data['SitePath']+"\" onclick=\"Jexus.Path_Click(this)\">"+data['SitePath']+"</a></td>";
+                   var reg = new RegExp( '\n' , "g" )
+                   data['SiteDomain']=data['SiteDomain'].replace(reg,"<br/>");
+                   var SiteDomain="<td>"+data['SiteDomain']+"</td>";
+                   switch (data['SiteStatus']) {
+                       case "new": status='<span style="color: orange">初始化</span>';break;
+                       case "start": status='<span style="color: green">已启动</span>';break;
+                       case "stop": status='<span style="color: red">已停止</span>';break;
+                   }
+                   var SiteStatus="<td>"+status+"</td>";
+                   var SiteAction="<td>";
+                   if(data['SiteStatus']!="start")
+                      SiteAction=SiteAction+'<a class="btlink" site="'+data['SiteName']+'" onclick="Jexus.Site_Start(this)">启动</a>';
+                   else  SiteAction=SiteAction+'<a class="btlink" site="'+data['SiteName']+'" onclick="Jexus.Site_Stop(this)">停止</a>';
+                   SiteAction=SiteAction+'&nbsp;<a class="btlink" site="'+data['SiteName']+'" onclick="Jexus.Site_Restart(this)">重启</a>';
+                   SiteAction=SiteAction+'&nbsp;<a class="btlink" site="'+data['SiteName']+'" onclick="Jexus.Site_Del(this)">删除</a>';
+                   SiteAction=SiteAction+'&nbsp;<a class="btlink" site="'+data['SiteName']+'" onclick="Jexus.Site_Config(this)">配置</a>'+'</td>';
+                   table=table+"<tr>"+SiteName+SitePath+SiteDomain+SiteStatus+SiteAction+"</tr>"
+               }
+                 $('#site_list').html(table);
+           }
+           else  request_plugin('Jexus','Site_List','',Jexus.Site_List)
+
+        },
+        Site_Start:function(dom)
+        {
+            var site=dom.getAttribute('site');
+              var data='sitename='+site;
+               request_plugin('Jexus','Site_Start',data,function(rdata)
+                 {layer.close(msg);msg=layer.msg("启动站点成功!");Jexus.Site_List("");});
+        },
+        Site_Stop:function(dom)
+        {
+            var site=dom.getAttribute('site');
+              var data='sitename='+site;
+               request_plugin('Jexus','Site_Stop',data,function(rdata)
+                 {layer.close(msg);msg=layer.msg("停止站点成功!");Jexus.Site_List("");});
+        },
+        Site_Restart:function(dom)
+        {
+            var site=dom.getAttribute('site');
+              var data='sitename='+site;
+               request_plugin('Jexus','Site_Restart',data,function(rdata)
+                 {layer.close(msg);msg=layer.msg("重启站点成功!");Jexus.Site_List("");});
+        },
+        Site_Del:function(dom)
+        {
+            var site=dom.getAttribute('site');
+              var data='sitename='+site;
+               request_plugin('Jexus','Site_Del',data,function(rdata)
+                 {BT.DelSite(rdata['domain'],rdata['siteid']);});
+        },
+        Site_Config:function(dom)
+        {
+            var site=dom.getAttribute('site');
+            var data='sitename='+site;
+            //从服务器获得网站的配置信息
+              request_plugin('Jexus','Site_Info',data,function(rdata)
+              {
+                  frame=layer.open({
+                type: 1,
+                title:'修改网站配置',
+                skin: 'layui-layer-rim', //加上边框
+                area: ['510px', '530px'], //宽高
+                content: '<div align="center"><table  class="table table-hover" style="border: 0 none;">' +
+                    '<tr><td>网站名称:</td><td><input id="Site_Add_Name" readonly="readonly" value=" '+rdata['info']['SiteName']+'"></td></tr>' +
+                    '<tr><td>网站目录:</td><td><input id="Site_Add_Path"  style="width:300px;" value="'+rdata['info']['SitePath']+'"></td></tr>' +
+                    '<tr><td>绑定域名:</td><td><textarea id="Site_Add_Domain" class="bt-input-text mr20 webname_y4LKda"  style="width:200px;height:100px;line-height:22px">'+rdata['info']['SiteDomain']+'</textarea></td></tr>' +
+                    '<tr><td colspan="2">网站名称必须为英文<br/>一行一个域名，默认为80端口<br/>支持域名泛解析，如*.bt.cn<br/>如果另外加端口格式为 www.bt.cn:88<br/><span style="color: red">由于面板网站域名的操作较为复杂，如果您需要修改域名，请在这里修改后，手动打开网站->域名管理修改绑定域名</span></td></tr>' +
+                    '<tr><td colspan="2" align="center  "><button class="btn btn-success btn-sm va0" onclick="Jexus.Site_Config_Post()">确认修改</button></td></tr>' +
+                    '</table></div>'
+                 });
+              });
+        },
+        Site_Config_Post:function(dom)
+        {
+            var data='sitename='+$('#Site_Add_Name').val()+'&path='+$('#Site_Add_Path').val()+'&domain='+$('#Site_Add_Domain').val();
+              request_plugin('Jexus','Site_Config',data,function(rdata) {
+                  if(rdata['status']=="Success")
+                  {
+                      layer.close(frame);
+                      layer.close(msg);
+                      msg=layer.msg("更新配置成功!如果您修改了域名，请手动打开网站->域名管理修改绑定域名");
+                  }
+              });
+        },
+        //此函数暂时废弃 Jexus 不知为何无法写入log 信息
+        Site_Log:function(dom)
+        {
+            var site=dom.getAttribute('site');
+            var data="Site="+site;
+          request_plugin('Jexus','sys_log',data,function(rdata)
+            {
+                if(rdata['status']!="Success") var content=rdata['msg']; else content=rdata['body'];
+               frame=layer.open({
+                type: 1,
+                title:'运行日志',
+                skin: 'layui-layer-rim', //加上边框
+                area: ['510px', '530px'], //宽高
+                content: '<textarea readonly="" style="margin: 0px;width: 500px;height: 520px;background-color: #333;color:#fff; padding:0 5px">'+content+'</textarea> '
+             });
+           });
+        },
+        Path_Click:function(dom)
+        {
+            var path=dom.getAttribute('path');
+            setCookie('Path',path);
+            window.location.href='/files';
+        },
+
+
+    }
+    BT={
+        AddSite:function (webname)
+        {
+             layer.close(msg);msg=layer.msg("正在创建站点:正在请求BT创建站点(第2步，共4步)");
+             webname=JSON.stringify(webname);
+             var data="webname="+webname+"&ps=ASP.NET_兼容站点请在插件中删除&path="+$('#Site_Add_Path').val()+"&ftp=false&sql=false&codeing=utf8&type=PHP&version=00&type_id=0&port=80";
+             request_btsite('site','AddSite',data,Jexus.Site_Add_Post);
+        },
+        ProxySite:function(site,dom)
+        {
+            if(site=='')  site=dom.getAttribute('sitename');
+            else{ layer.close(msg);msg=layer.msg("正在创建站点:正在请求BT创建反向代理(第3步，共4步)");}
+            var subfilter='[{"sub1":"","sub2":""},{"sub1":"","sub2":""},{"sub1":"","sub2":""}]';
+            var data="sitename="+site+"&type=1&proxyname=Jexus&cachetime=1&proxydir=/&proxysite=http://127.0.0.1:2333&todomain=$host&cache=0&advanced=0&subfilter="+subfilter
+             request_btsite('site','CreateProxy',data,Jexus.Site_Add_Post);
+        },
+        DelSite:function(webname,id)
+        {
+            var data='path=1&webname='+webname+'&id='+id;
+            request_btsite('site','DeleteSite',data,function() {layer.close(msg);msg=layer.msg("删除站点成功!");Jexus.Site_List("");});
+        }
+
+
+
+    }
+    /**
+     *  宝塔前端API 实现新建站点，删除站点，设置反向代理
+     *  //新建站点
+     *  site?action=AddSite
+     *  //删除站点
+     *  site?action=DeleteSite
+     *  //设置反向代理
+     *  site?action=CreateProxy
+     */
+    function request_btsite(mode,fun,args,callback,timeout)
+    {
+       if (!timeout) timeout = 5000;
+        $.ajax({
+            type:'POST',
+            url: '/'+mode+'?action='+fun,
+            data: args,
+            timeout:timeout,
+            success: function(rdata) {
+                if (!callback) {
+                    layer.msg(rdata.msg, { icon: rdata.status ? 1 : 2 });
+                    return;
+                }
+
+                return callback(rdata);
+            },
+            error: function(ex) {
+                if (!callback) {
+                    layer.msg('请求过程发现错误!', { icon: 2 });
+                    return;
+                }
+                return callback(ex);
+            }
+        });
+    }
+
+    /**
+     * 发送请求到插件
+     * 注意：除非你知道如何自己构造正确访问插件的ajax，否则建议您使用此方法与后端进行通信
+     * @param plugin_name    插件名称 如：demo
+     * @param function_name  要访问的方法名，如：get_logs
+     * @param args           传到插件方法中的参数 请传入数组，示例：{p:1,rows:10,callback:"demo.get_logs"}
+     * @param callback       请传入处理函数，响应内容将传入到第一个参数中
+     */
+    function request_plugin(plugin_name, function_name, args, callback, timeout) {
+        if (!timeout) timeout = 3600;
+        $.ajax({
+            type:'POST',
+            url: '/plugin?action=a&s=' + function_name + '&name=' + plugin_name,
+            data: args,
+            timeout:timeout,
+            success: function(rdata) {
+                if (!callback) {
+                    layer.msg(rdata.msg, { icon: rdata.status ? 1 : 2 });
+                    return;
+                }
+                rdata=JSON.parse(rdata);
+                return callback(rdata);
+            },
+            error: function(ex) {
+                if (!callback) {
+                    layer.msg('请求过程发现错误!', { icon: 2 });
+                    return;
+                }
+                return callback(ex);
+            }
+        });
+    }
+
+    function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+         }
+         if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+         }
+     }
+    return "";
+}
+   function setCookie(name,value,time){
+		var Days = 30;
+		var exp = new Date();
+		if(time) exp.setTime(exp.getTime()+time);
+		else exp.setTime(exp.getTime() + Days*24*60*60*30);
+		document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+	}
+
+       Jexus.switch_view('index');
+
+
+</script>
