@@ -22,6 +22,10 @@ Install()
 
     #删除默认站点
     rm -rf /www/server/jexus/siteconf/default
+    
+    安装.Net Core
+    wget --no-check-certificate https://dot.net/v1/dotnet-install.sh && sh install.sh
+    
 
    
 	echo '================================================'
