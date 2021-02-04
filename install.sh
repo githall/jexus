@@ -26,7 +26,7 @@ Install()
     安装.Net Core
     wget --no-check-certificate https://dot.net/v1/dotnet-install.sh
     sudo chmod +x dotnet-install.sh
-    ./dotnet-install.sh
+    sudo ./dotnet-install.sh
     
 
    
