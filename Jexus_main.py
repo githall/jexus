@@ -51,7 +51,7 @@ class Jexus_main:
     #配置Jexus 的设置信息
     def sys_config(self,args):
         if not hasattr(args,'process'):
-            config={'logs': self.__plugin_path + 'logs/', 'siteconf': self.__plugin_path + 'config/Site', 'http_process': 2, 'http_MaxMemory': 0, 'http_MaxCpuTime': 3600, 'http_MaxConnIp': 0 }
+            config={'logs': self.__plugin_path + 'logs/', 'siteconf': self.__plugin_path + 'config/Site', 'http_process': 2, 'http_MaxMemory': 0, 'http_MaxCpuTime': 7200, 'http_MaxConnIp': 0 }
         else:
             config={'logs': self.__plugin_path + 'logs/', 'siteconf': self.__plugin_path + 'config/Site', 'http_process': args.process, 'http_MaxMemory': args.Memory, 'http_MaxCpuTime': args.CpuTime, 'http_MaxConnIp': args.ConnIp}
         #将config 写入sys.config 文件
@@ -59,13 +59,24 @@ class Jexus_main:
         config = json.loads(public.readFile(self.__plugin_path + 'config/sys.config'))
         #将config 数组按照指定格式写入 /jws.conf
         Jws='''
-      SiteLogDir=%s
-      SiteConfigDir=%s
+        SiteLogDir=%s
+        SiteConfigDir=%s
       
-      httpd.processes=%s          #: 1-24. (0 is auto)
-      httpd.MaxTotalMemory=%s     #: In megabytes. Set to 0 for auto.
-      httpd.MaxCpuTime=%s         #: In seconds. Set to 0 for unlimited.
-      httpd.MaxConnPerIp=%s       #: 0 is unlimited
+        httpd.processes=%s          #: 1-24. (0 is auto)
+        httpd.MaxTotalMemory=%s     #: In megabytes. Set to 0 for auto.
+        httpd.MaxCpuTime=%s         #: In seconds. Set to 0 for unlimited.
+        httpd.MaxConnPerIp=%s       #: 0 is unlimited
+	  
+	    # httpd.User=www-data
+        # php-fcgi.set=/usr/bin/php-cgi,8
+
+        # HTTPS/SSL Global default configuration
+        ##########################################
+
+        # CertificateFile    = /xxxx/xx.crt
+        # CertificateKeyFile = /xxxx/xx.key
+        # SSL_TLS_Version    = TLSv1.1 TLSv1.2   #  TLSv1.0  TLSv1.1  TLSv1.2, default is SSLv23
+        # SSL_Ciphers        = ECDHE-RSA-AES256-GCM-SHA384:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4:!DH:!DHE
       '''%(config['logs'],config['siteconf'],config['http_process'],config['http_MaxMemory'],config['http_MaxCpuTime'],config['http_MaxConnIp'])
         public.WriteFile('/www/server/jexus/jws.conf',Jws)
         if not self.sys_status():
@@ -125,7 +136,7 @@ class Jexus_main:
                 os.popen('chkconfig --del BT_Jexus')
             elif re.findall(r"Debian", System) or re.findall(r'Ubuntu', System):
                 os.open('sudo update-rc.d -f BT_Jexus remove')
-            os.popen('rm -rf /etc/init.d/BT_Jexus')
+            os.popen('rm -rf /etc/rc.d/init.d/BT_Jexus')
         else:
             #启动开机启动
             self.WGetDownload("https://gitee.com/githall/jexus/blob/master/BT_Jexus","/www/server/panel/plugin/Jexus/BT_Jexus")
