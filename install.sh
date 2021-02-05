@@ -1,5 +1,5 @@
 #!/bin/bash
-PATH=/www/server/panel/pyenv/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 
 #配置插件安装目录
@@ -15,19 +15,18 @@ Install()
     tar -zxvf jexus-7.0.x-x64.tar.gz
     mv jexus /www/server/jexus
     rm -rf jexus-7.0.x-x64.tar.gz
-
+    
+    #设置程序可执行
     chmod +x /www/server/jexus/jws
+    
     #初始化
     /www/server/jexus/jws init
-
-    #删除默认站点
-    rm -rf /www/server/jexus/siteconf/default
     
-    安装.Net Core
-    wget --no-check-certificate https://dot.net/v1/dotnet-install.sh
-    sudo chmod +x dotnet-install.sh
-    sudo ./dotnet-install.sh
+    #设置开机启动
+    systemctl enable /www/server/jexus/jws.service
     
+    #移动默认配置文件到jexus目录
+    mv /www/server/jexus/siteconf/default /www/server/jexus/
 
    
 	echo '================================================'
