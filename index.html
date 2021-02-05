@@ -20,14 +20,14 @@
             <!-- 主页显示内容 -->
             <div class="plugin_body" id="index">
                 <div id="index_notice">
-                    <p><span class="span_red">[友情提醒]:</span><br/>
-                        1.请不要在宝塔面板的网站选项中删除ASP.NET站点,这会导致插件出现错误<br/>
-                        2.网络上很多ASP.NET程序需要连接ACCESS数据库,请自行安装相关环境<br/>
-                        3.本插件实质是借助 mono 虚拟化Windows 环境,如非必要请不要频繁重启 Jexus<br/>
-                        4.插件论坛帖子地址<a class="btlink" target="_blank" href="https://www.bt.cn/bbs/thread-33593-1-1.html">点击这里跳转到宝塔论坛</a>,QQ群:427901182
+                    <p><span class="span_red">[温馨提示]:</span><br/>
+                        1.Jexus官方网站：https://www.jexus.org/ 。<br/>
+                        2.Jexus技术支持网站：https://www.linuxdot.net/ 。<br/>
+                        3.安装本插件默认安装的是Jexus独立版。<br/>
+                        4.插件问题反馈地址<a class="btlink" target="_blank" href="https://www.bt.cn/bbs/thread-33593-1-1.html">点击这里跳转到宝塔论坛</a>,欢迎加入.NET LINUX工程师群: 103810355  ASP.NET LINUX实战群: 102732979
                     </p>
                      <button id="ServerAdd" onclick="Jexus.Site_Add()" class="btn btn-success btn-sm va0" type="button" >添加网站</button><br/>
-                </div>
+              </div>
                 <hr/>
                 <table border="1" class="table table-hover" style="min-width: 640px;border: 0 none;" id="site_list">
                     <tr><td>站点名称</td><td>网站目录</td><td>绑定域名</td><td>站点状态</td><td>操作</td></tr>
@@ -55,7 +55,7 @@
                           <tr><td>最大内存(MaxTotalMemory)</td><td><input type="text" id="http_Memory"></td><td> In megabytes. Set to 0 for auto.</td></tr>
                           <tr><td>最大单线程CPU调度时间(MaxCpuTime)</td><td><input type="text" id="http_CpuTime"></td><td>  In seconds. Set to 0 for unlimited.</td></tr>
                           <tr><td>最大连接数量(MaxConnPerIp)</td><td><input type="text" id="http_ConnIp"></td><td> 0 is unlimited</td></tr>
-                          <tr><td colspan="2">Jexus默认端口号:<span class="span_red">2333</span><br/>全局配置文件:<span class="span_red">/www/server/jexus/jws.conf</span><br/><a  class="btlink" href="https://www.iw3c.top/index/index.php/archives/25.html" target="_blank">点击这里查看更多配置信息</a></td><td><button id="ServerConfig" onclick="Jexus.service_config()" class="btn  btn-sm va0" type="button" >修改配置</button></td></tr>
+                          <tr><td colspan="2">Jexus默认端口号:<span class="span_red">2333</span><br/>全局配置文件:<span class="span_red">/www/server/jexus/jws.conf</span><br/><a  class="btlink" href="https://www.linuxdot.net/bbsfile-3500" target="_blank">点击这里查看更多配置信息</a></td><td><button id="ServerConfig" onclick="Jexus.service_config()" class="btn  btn-sm va0" type="button" >修改配置</button></td></tr>
                       </table>
                   </div>
             </div>
