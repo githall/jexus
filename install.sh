@@ -23,7 +23,7 @@ Install()
     /www/server/jexus/jws init
     
     #设置开机启动
-    systemctl enable /www/server/jexus/jws.service
+    # systemctl enable /www/server/jexus/jws.service
     
     #移动默认配置文件到jexus目录
     mv /www/server/jexus/siteconf/default /www/server/jexus/
