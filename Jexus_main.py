@@ -81,7 +81,7 @@ class Jexus_main:
         public.WriteFile('/www/server/jexus/jws.conf',Jws)
         if not self.sys_status():
             self.Site_SetDefault()
-            os.popen('sudo - i /www/server/jexus/jws start')
+            os.popen('sudo -i /www/server/jexus/jws start')
         os.popen('sudo -i /www/server/jexus/jws restart')
         self.Site_ConfigAllStart()
         return json.dumps({'status':'Success','mes':'Set Jexus Gobal Config Success!'})
