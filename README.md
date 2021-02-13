@@ -143,10 +143,11 @@ sudo /usr/Jexus/jws restart
 
 ### Jexus使用相关教学视频
 
-#### 
-#### 
-#### 
-#### 
-#### 
+#### [宝塔Linux面板ASP.NET 管理器插件的使用](https://haokan.baidu.com/v?vid=13610621787428891308)
+#### [在Ubuntu 16.04上利用Jexus+Mono+Mysql部署DTcms Mysql Linux版  ](https://haokan.baidu.com/v?vid=15866474924969773444)
+#### [在Ubuntu 16.04上利用Jexus+php-fpm+Mysql安装开源版Edusoho网校](https://haokan.baidu.com/v?vid=15866474924969773444)
+#### [Ubuntu上用Jexus+.Net Core+Linux版SQL Server安装ZKEACMS.Core](https://haokan.baidu.com/v?vid=5497251830794862289)
+#### [在Ubuntu18.04下部署SiteServer CMS .Net Core版](https://haokan.baidu.com/v?vid=9730986015264230853)
+#### [Ubuntu上用Jexus+.Net Core+Linux版SQL Server安装ZKEACMS.Core](https://haokan.baidu.com/v?vid=5497251830794862289)
 
 
