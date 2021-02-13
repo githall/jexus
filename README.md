@@ -150,6 +150,5 @@ sudo /usr/Jexus/jws restart
 #### [在Ubuntu18.04下部署SiteServer CMS .Net Core版](https://haokan.baidu.com/v?vid=9730986015264230853)
 
 ### 支持&打赏
-
-
+https://download.mcloud.139.com/storageWeb/servlet/GetFileByURLServlet?root=/mnt/wfs105&fileid=KB01542d484ea28c1f66b6a5f39423caea.png
 
