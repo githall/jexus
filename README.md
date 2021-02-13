@@ -149,4 +149,7 @@ sudo /usr/Jexus/jws restart
 #### [Ubuntu上用Jexus+.Net Core+Linux版SQL Server安装ZKEACMS.Core](https://haokan.baidu.com/v?vid=5497251830794862289)
 #### [在Ubuntu18.04下部署SiteServer CMS .Net Core版](https://haokan.baidu.com/v?vid=9730986015264230853)
 
+### 支持&打赏
+
+
 
