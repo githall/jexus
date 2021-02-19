@@ -139,7 +139,6 @@ class Jexus_main:
             os.popen('rm -rf /etc/rc.d/init.d/BT_Jexus')
         else:
             #启动开机启动
-            self.WGetDownload("http://dl.githall.com/BT_Jexus","/www/server/panel/plugin/Jexus/BT_Jexus")
             os.popen('cp ' + self.__plugin_path + 'BT_Jexus /etc/init.d/BT_Jexus')
             osys = system_info()
             System = osys.GetSystemVersion()
@@ -178,7 +177,6 @@ class Jexus_main:
         '''
         public.WriteFile('/www/server/panel/plugin/Jexus/config/Site/Default',Default)
         #下载默认站点文件
-        self.WGetDownload("http://dl.githall.com/DefaultSite.tar.gz",self.__plugin_path+'DefaultSite.tar.gz')
         os.popen("cd "+self.__plugin_path+" && tar -zxvf "+self.__plugin_path+'DefaultSite.tar.gz')
         os.popen("mv "+self.__plugin_path+"DefaultSite "+self.__plugin_path+'config/')
         os.popen("rm -rf "+self.__plugin_path+'DefaultSite.tar.gz')
@@ -223,9 +221,8 @@ class Jexus_main:
         # 读取站点的配置
         config = json.loads(public.readFile(self.__plugin_path + "config/Info/" + SiteName+'.json'))
         if config['SiteStatus'] == "new":
-            # 下载并解压默认网站文件
+            # 解压默认网站文件
             os.popen("rm -rf " + config['SitePath'] + "/*")
-            self.WGetDownload("hhttp://dl.githall.com/NewSite.tar.gz", config['SitePath'] + '/NewSite.tar.gz')
             os.popen("cd " + config['SitePath'] + "  && tar -zxvf NewSite.tar.gz")
             os.popen("sudo -i && rm -rf " + config['SitePath'] + "/NewSite.tar.gz")
             config['SiteId'] = args.id
