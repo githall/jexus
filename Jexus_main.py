@@ -177,9 +177,7 @@ class Jexus_main:
         '''
         public.WriteFile('/www/server/panel/plugin/Jexus/config/Site/Default',Default)
         #下载默认站点文件
-        os.popen("cd "+self.__plugin_path+" && tar -zxvf "+self.__plugin_path+'DefaultSite.tar.gz')
-        os.popen("mv "+self.__plugin_path+"DefaultSite "+self.__plugin_path+'config/')
-        os.popen("rm -rf "+self.__plugin_path+'DefaultSite.tar.gz')
+        os.popen('mv /www/server/panel/plugin/Jexus/DefaultSite /www/server/panel/plugin/Jexus/config/')
 
     #添加新的站点
     def Site_add(self,args):
@@ -223,8 +221,7 @@ class Jexus_main:
         if config['SiteStatus'] == "new":
             # 解压默认网站文件
             os.popen("rm -rf " + config['SitePath'] + "/*")
-            os.popen("cd " + config['SitePath'] + "  && tar -zxvf NewSite.tar.gz")
-            os.popen("sudo -i && rm -rf " + config['SitePath'] + "/NewSite.tar.gz")
+            os.popen("cd " + config['SitePath'] + "  && mv /www/server/panel/plugin/Jexus/NewSite")
             config['SiteId'] = args.id
         config['SiteStatus'] = 'start'
         public.WriteFile(self.__plugin_path + "config/Info/" + SiteName+'.json', json.dumps(config))
