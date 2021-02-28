@@ -77,6 +77,7 @@ class Jexus_main:
         # CertificateKeyFile = /xxxx/xx.key
         # SSL_TLS_Version    = TLSv1.1 TLSv1.2   #  TLSv1.0  TLSv1.1  TLSv1.2, default is SSLv23
         # SSL_Ciphers        = ECDHE-RSA-AES256-GCM-SHA384:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4:!DH:!DHE
+	fastcgi.add=php|socket:/tmp/php-cgi-73.sock
       '''%(config['logs'],config['siteconf'],config['http_process'],config['http_MaxMemory'],config['http_MaxCpuTime'],config['http_MaxConnIp'])
         public.WriteFile('/www/server/jexus/jws.conf',Jws)
         if not self.sys_status():
@@ -173,7 +174,8 @@ class Jexus_main:
         indexs=index.aspx
         host=*
         nofile= /404.html
-        nolog=no 
+        nolog=no
+	fastcgi.add=php|socket:/tmp/php-cgi-73.sock
         '''
         public.WriteFile('/www/server/panel/plugin/Jexus/config/Site/Default',Default)
         #下载默认站点文件
@@ -206,7 +208,8 @@ class Jexus_main:
         indexs=index.aspx
         host=%s 
         nofile= /404.html
-        nolog=no 
+        nolog=no
+	fastcgi.add=php|socket:/tmp/php-cgi-73.sock
         ''' % (args.Path, Domain)
             public.WriteFile(self.__plugin_path + 'config/Site/' + args.Name, Config)
             count = num - 1
@@ -295,7 +298,8 @@ class Jexus_main:
                indexs=index.aspx
                host=%s   
                nofile= /404.html
-               nolog=no 
+               nolog=no
+	       fastcgi.add=php|socket:/tmp/php-cgi-73.sock
                ''' % (args.path, Domain)
         public.WriteFile(self.__plugin_path + 'config/Site/' + SiteName, Config)
         self.Site_Start(args)
