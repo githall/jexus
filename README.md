@@ -154,6 +154,3 @@ sudo /usr/Jexus/jws restart
 #### [在Ubuntu 16.04上利用Jexus+php-fpm+Mysql安装开源版Edusoho网校](https://haokan.baidu.com/v?vid=15866474924969773444)
 #### [Ubuntu上用Jexus+.Net Core+Linux版SQL Server安装ZKEACMS.Core](https://haokan.baidu.com/v?vid=5497251830794862289)
 #### [在Ubuntu18.04下部署SiteServer CMS .Net Core版](https://haokan.baidu.com/v?vid=9730986015264230853)
-
-### 支持&打赏
-![输入图片说明](http://download.xnmx.net/ewm.png)
