@@ -1,4 +1,0 @@
-#!/bin/bash
-#chkconfig:2345 61 61
-
-sudo -i /www/server/jexus/jws start
