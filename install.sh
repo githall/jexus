@@ -11,22 +11,22 @@ Install()
 	
 	echo '正在安装...'
 
-    wget --no-check-certificate https://linuxdot.net/down/jexus-7.0.x-x64.tar.gz
-    tar -zxvf jexus-7.0.x-x64.tar.gz
-    mv jexus /www/server/jexus
-    rm -rf jexus-7.0.x-x64.tar.gz
+    sudo wget --no-check-certificate https://linuxdot.net/down/jexus-7.0.x-x64.tar.gz
+    sudo tar -zxvf jexus-7.0.x-x64.tar.gz
+    sudo mv jexus /www/server/jexus
+    sudo rm -rf jexus-7.0.x-x64.tar.gz
     
     #设置程序可执行
-    chmod +x /www/server/jexus/jws
+    sudo chmod +x /www/server/jexus/jws
     
     #初始化
-    /www/server/jexus/jws init
+    sudo /www/server/jexus/jws init
     
     #设置开机启动
-    systemctl enable /www/server/jexus/jws.service
+    sudo systemctl enable /www/server/jexus/jws.service
     
     #移动默认配置文件到jexus目录
-    mv /www/server/jexus/siteconf/default /www/server/jexus/
+    sudo mv /www/server/jexus/siteconf/default /www/server/jexus/
 
    
 	echo '================================================'
